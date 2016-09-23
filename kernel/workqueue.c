@@ -1734,11 +1734,11 @@ static void worker_attach_to_pool(struct worker *worker,
 	if (pool->flags & POOL_DISASSOCIATED)
 		worker->flags |= WORKER_UNBOUND;
 	else
+#ifdef kthread_set_per_cpu
 		kthread_set_per_cpu(worker->task, pool->cpu);
-
+#endif
 	if (worker->rescue_wq)
 		set_cpus_allowed_ptr(worker->task, pool->attrs->cpumask);
-
 	list_add_tail(&worker->node, &pool->workers);
 
 	mutex_unlock(&pool->attach_mutex);
@@ -1759,7 +1759,9 @@ static void worker_detach_from_pool(struct worker *worker,
 	struct completion *detach_completion = NULL;
 
 	mutex_lock(&pool->attach_mutex);
+#ifdef kthread_set_per_cpu
 	kthread_set_per_cpu(worker->task, -1);
+#endif
 	list_del(&worker->node);
 	if (list_empty(&pool->workers))
 		detach_completion = pool->detach_completion;
@@ -4601,7 +4603,9 @@ static void unbind_workers(int cpu)
 		 * this, they may become diasporas.
 		 */
 		for_each_pool_worker(worker, pool) {
+#ifdef kthread_set_per_cpu
 			kthread_set_per_cpu(worker->task, -1);
+#endif
 			worker->flags |= WORKER_UNBOUND;
 		}
 
@@ -4659,7 +4663,9 @@ static void rebind_workers(struct worker_pool *pool)
 	 * from CPU_ONLINE, the following shouldn't fail.
 	 */
 	for_each_pool_worker(worker, pool) {
+#ifdef kthread_set_per_cpu
 		kthread_set_per_cpu(worker->task, pool->cpu);
+#endif
 		WARN_ON_ONCE(set_cpus_allowed_ptr(worker->task,
 						  pool->attrs->cpumask) < 0);
 	}
