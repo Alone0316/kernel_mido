@@ -369,8 +369,6 @@ static void debug_low_async_space_locked(struct binder_alloc *alloc, int pid)
 	for (n = rb_first(&alloc->allocated_buffers); n != NULL;
 		 n = rb_next(n)) {
 		buffer = rb_entry(n, struct binder_buffer, rb_node);
-		if (buffer->pid != pid)
-			continue;
 		if (!buffer->async_transaction)
 			continue;
 		total_alloc_size += binder_alloc_buffer_size(alloc, buffer)
@@ -383,9 +381,7 @@ static void debug_low_async_space_locked(struct binder_alloc *alloc, int pid)
 	 * async space (which is 25% of total buffer size).
 	 */
 	if (num_buffers > 50 || total_alloc_size > alloc->buffer_size / 4) {
-		binder_alloc_debug(BINDER_DEBUG_USER_ERROR,
-			     "%d: pid %d spamming oneway? %zd buffers allocated for a total size of %zd\n",
-			      alloc->pid, pid, num_buffers, total_alloc_size);
+			      alloc->pid, pid, num_buffers, total_alloc_size;
 	}
 }
 

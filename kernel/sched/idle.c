@@ -229,7 +229,9 @@ static void cpu_idle_loop(void)
 			rmb();
 
 		if (cpu_is_offline(cpu)) {
+#ifdef tick_nohz_idle_stop_tick_protected
 			tick_nohz_idle_stop_tick_protected();
+#endif
 			cpuhp_report_idle_dead();
 			arch_cpu_idle_dead();
 		}
