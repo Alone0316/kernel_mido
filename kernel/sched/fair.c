@@ -11200,8 +11200,8 @@ static inline bool nohz_kick_needed(struct rq *rq, int *type)
 		return true;
 
 	/* Do idle load balance if there have misfit task */
-	if (energy_aware())
-		return rq->misfit_task;
+	if (energy_aware() && rq->misfit_task)
+		return true;
 
 	rcu_read_lock();
 	sds = rcu_dereference(per_cpu(sd_llc_shared, cpu));
