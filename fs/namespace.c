@@ -1781,6 +1781,11 @@ dput_and_out:
 		/* flush delayed_mntput_work to put sb->s_active */
 		flush_delayed_mntput_wait();
 	}
+	if (!retval || (flags & MNT_FORCE)) {
+		/* filesystem needs to handle unclosed namespaces */
+		if (mnt->mnt.mnt_sb->s_op->umount_end)
+			mnt->mnt.mnt_sb->s_op->umount_end(mnt->mnt.mnt_sb, flags);
+	}
 out:
 	return retval;
 }
