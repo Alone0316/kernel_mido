@@ -983,8 +983,6 @@ grow_dev_page(struct block_device *bdev, sector_t block,
 	gfp_mask |= __GFP_NOFAIL;
 
 	page = find_or_create_page(inode->i_mapping, index, gfp_mask);
-	if (!page)
-		return ret;
 
 	BUG_ON(!PageLocked(page));
 
@@ -1006,6 +1004,7 @@ grow_dev_page(struct block_device *bdev, sector_t block,
 	bh = alloc_page_buffers(page, size, 0);
 	if (!bh)
 		goto failed;
+	bh = alloc_page_buffers(page, size, true);
 
 	/*
 	 * Link the page to the buffers and initialise them.  Take the
