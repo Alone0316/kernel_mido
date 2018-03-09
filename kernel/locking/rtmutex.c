@@ -1612,15 +1612,23 @@ bool __sched __rt_mutex_futex_unlock(struct rt_mutex *lock,
 
 void __sched rt_mutex_futex_unlock(struct rt_mutex *lock)
 {
-	WAKE_Q(wake_q);
-	bool deboost;
+#ifdef DEFINE_WAKE_Q
+#ifdef wake_q
+	DEFINE_WAKE_Q(wake_q);
+#endif
+#endif
+        unsigned long flags;
+	bool postunlock;
 
-	raw_spin_lock_irq(&lock->wait_lock);
-	deboost = __rt_mutex_futex_unlock(lock, &wake_q);
-	raw_spin_unlock_irq(&lock->wait_lock);
-
-	if (deboost) {
+	raw_spin_lock_irqsave(&lock->wait_lock, flags);
+#ifdef wake_q
+	postunlock = __rt_mutex_futex_unlock(lock, &wake_q);
+#endif
+	raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
+	if (postunlock) {
+#ifdef wake_q
 		wake_up_q(&wake_q);
+#endif
 		rt_mutex_adjust_prio(current);
 	}
 }
