@@ -4358,7 +4358,18 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
 	 */
 	if (empty)
 		start_cfs_bandwidth(cfs_b);
-
+/*
+ * Convert percentage value into absolute form. This will avoid div() operation
+ * in fast path, to convert task load in percentage scale.
+ */
+int sched_hmp_proc_update_handler(struct ctl_table *table, int write,
+		void __user *buffer, size_t *lenp,
+		loff_t *ppos)
+{
+	int ret;
+	unsigned int old_val;
+	unsigned int *data = (unsigned int *)table->data;
+	int update_min_nice = 0;
 	raw_spin_unlock(&cfs_b->lock);
 }
 
@@ -4374,7 +4385,8 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
 	se = cfs_rq->tg->se[cpu_of(rq)];
 
 	cfs_rq->throttled = 0;
-
+	if (ret || !write || !sched_enable_hmp)
+		goto done;
 	update_rq_clock(rq);
 
 	raw_spin_lock(&cfs_b->lock);
@@ -4384,7 +4396,41 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
 
 	/* update hierarchical throttle state */
 	walk_tg_tree_from(cfs_rq->tg, tg_nop, tg_unthrottle_up, (void *)rq);
+	if (handle_freq_aggregate_threshold(data, old_val)) {
+		goto done;
+	}
+	if (data == (unsigned int *)&sysctl_sched_upmigrate_min_nice) {
+		if ((*(int *)data) < -20 || (*(int *)data) > 19) {
+			*data = old_val;
+			ret = -EINVAL;
+			goto done;
+		}
+		update_min_nice = 1;
+	} else if (data != &sysctl_sched_select_prev_cpu_us) {
+		/*
+		 * all tunables other than min_nice and prev_cpu_us are
+		 * in percentage.
+		 */
+		if (sysctl_sched_downmigrate_pct >
+		    sysctl_sched_upmigrate_pct || *data > 100) {
+			*data = old_val;
+			ret = -EINVAL;
+			goto done;
+		}
+	}
 
+	/*
+	 * Big task tunable change will need to re-classify tasks on
+	 * runqueue as big and set their counters appropriately.
+	 * sysctl interface affects secondary variables (*_pct), which is then
+	 * "atomically" carried over to the primary variables. Atomic change
+	 * includes taking runqueue lock of all online cpus and re-initiatizing
+	 * their big counter values based on changed criteria.
+	 */
+	if ((data == &sysctl_sched_upmigrate_pct || update_min_nice)) {
+		get_online_cpus();
+		pre_big_task_count_change(cpu_online_mask);
+	}
 	if (!cfs_rq->load.weight)
 		return;
 
@@ -4401,7 +4447,17 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
 		walt_propagate_cumulative_runnable_avg(
 				   &cfs_rq->walt_stats.cumulative_runnable_avg,
 				   tcfs_rq->walt_stats.cumulative_runnable_avg, true);
+				   &cfs_rq->cumulative_runnable_avg,
+				   tcfs_rq->cumulative_runnable_avg, true);
+	if ((data == &sysctl_sched_upmigrate_pct || update_min_nice)) {
+		post_big_task_count_change(cpu_online_mask);
+		put_online_cpus();
+	}
 
+done:
+	mutex_unlock(&policy_mutex);
+	return ret;
+}
 		if (cfs_rq_throttled(cfs_rq))
 			break;
 	}
