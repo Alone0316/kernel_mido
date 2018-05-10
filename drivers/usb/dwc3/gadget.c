@@ -1090,8 +1090,11 @@ static u32 dwc3_calc_trbs_left(struct dwc3_ep *dep)
 	u8			trbs_left;
 
 	if (dep->trb_enqueue == dep->trb_dequeue) {
-		tmp = dwc3_ep_prev_trb(dep, dep->trb_enqueue);
-		if (!tmp || tmp->ctrl & DWC3_TRB_CTRL_HWO)
+		/*
+                 *If there is any request remained in the started_list at
+                 *or empty. It's considered full when there are DWC3_TRB_NUM-1 of TRBs
+                 *pending to be processed by the driver.
+                 */
 		if (!list_empty(&dep->started_list))
 			return 0;
 
