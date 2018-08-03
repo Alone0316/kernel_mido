@@ -374,6 +374,7 @@ int qca_uart_setup_rome(struct hci_dev *hdev, uint8_t baudrate)
 	u32 rome_ver = 0;
 	struct rome_config config;
 	int err;
+	u8 rom_ver;
 
 	BT_DBG("%s: ROME setup on UART", hdev->name);
 
@@ -390,8 +391,19 @@ int qca_uart_setup_rome(struct hci_dev *hdev, uint8_t baudrate)
 
 	/* Download rampatch file */
 	config.type = TLV_TYPE_PATCH;
-	snprintf(config.fwname, sizeof(config.fwname), "qca/rampatch_%08x.bin",
-		 rome_ver);
+	if (soc_type == QCA_WCN3990) {
+		/* Firmware files to download are based on ROM version.
+		 * ROM version is derived from last two bytes of soc_ver.
+		 */
+		rom_ver = ((soc_ver & 0x00000f00) >> 0x04) |
+			    (soc_ver & 0x0000000f);
+		snprintf(config.fwname, sizeof(config.fwname),
+			 "qca/crbtfw%02x.tlv", rom_ver);
+	} else {
+		snprintf(config.fwname, sizeof(config.fwname),
+			 "qca/rampatch_%08x.bin", soc_ver);
+	}
+
 	err = rome_download_firmware(hdev, &config);
 	if (err < 0) {
 		BT_ERR("%s: Failed to download patch (%d)", hdev->name, err);
@@ -403,8 +415,13 @@ int qca_uart_setup_rome(struct hci_dev *hdev, uint8_t baudrate)
 
 	/* Download NVM configuration */
 	config.type = TLV_TYPE_NVM;
-	snprintf(config.fwname, sizeof(config.fwname), "qca/nvm_%08x.bin",
-		 rome_ver);
+	if (soc_type == QCA_WCN3990)
+		snprintf(config.fwname, sizeof(config.fwname),
+			 "qca/crnv%02x.bin", rom_ver);
+	else
+		snprintf(config.fwname, sizeof(config.fwname),
+			 "qca/nvm_%08x.bin", soc_ver);
+
 	err = rome_download_firmware(hdev, &config);
 	if (err < 0) {
 		BT_ERR("%s: Failed to download NVM (%d)", hdev->name, err);
