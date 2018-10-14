@@ -730,14 +730,10 @@ endif
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS   += -Os
 else
-<<<<<<< HEAD
 ifeq ($(cc-name),clang)
 KBUILD_CFLAGS   += -O3 -finline-hint-functions
 else
 KBUILD_CFLAGS   += -O2
-=======
-KBUILD_CFLAGS   += -O3
->>>>>>> 534c0a2b467f... Makefile: Use O3 Optimizations
 endif
 KBUILD_CFLAGS   += -O3
 endif
