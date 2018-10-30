@@ -154,6 +154,7 @@ static FORCE_INLINE int LZ4_decompress_generic(
 			     (op <= shortoend))) {
 			/* Copy the literals */
 			LZ4_memcpy(op, ip, endOnInput ? 16 : 8);
+			memcpy(op, ip, endOnInput ? 16 : 8);
 			op += length; ip += length;
 
 			/*
@@ -175,6 +176,9 @@ static FORCE_INLINE int LZ4_decompress_generic(
 				LZ4_memcpy(op + 0, match + 0, 8);
 				LZ4_memcpy(op + 8, match + 8, 8);
 				LZ4_memcpy(op + 16, match + 16, 2);
+				memcpy(op + 0, match + 0, 8);
+				memcpy(op + 8, match + 8, 8);
+				memcpy(op + 16, match + 16, 2);
 				op += length + MINMATCH;
 				/* Both stages worked, load the next token. */
 				continue;
@@ -391,6 +395,7 @@ _copy_match:
 					*op++ = *match++;
 			} else {
 				LZ4_memcpy(op, match, mlen);
+				memcpy(op, match, mlen);
 			}
 			op = copyEnd;
 			if (op == oend)
@@ -405,6 +410,7 @@ _copy_match:
 			op[3] = match[3];
 			match += inc32table[offset];
 			LZ4_memcpy(op + 4, match, 4);
+			memcpy(op + 4, match, 4);
 			match -= dec64table[offset];
 		} else {
 			LZ4_copy8(op, match);
@@ -479,8 +485,7 @@ int LZ4_decompress_fast(const char *source, char *dest, int originalSize)
 				      (BYTE *)dest - 64 * KB, NULL, 0);
 }
 
-/* ===== Instantiate a few more decoding cases, used more than once. ===== */
-
+/* Instantiate a few more decoding cases, used more than once.*/
 static int LZ4_decompress_safe_withPrefix64k(const char *source, char *dest,
 				      int compressedSize, int maxOutputSize)
 {
@@ -555,7 +560,7 @@ int LZ4_decompress_fast_doubleDict(const char *source, char *dest,
 				      (const BYTE *)dictStart, dictSize);
 }
 
-/* ===== streaming decompression functions ===== */
+/* streaming decompression functions */
 
 int LZ4_setStreamDecode(LZ4_streamDecode_t *LZ4_streamDecode,
 	const char *dictionary, int dictSize)
