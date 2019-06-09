@@ -152,12 +152,12 @@ int freeze_processes(void)
 	if (!error) {
 		__usermodehelper_set_disable_depth(UMH_DISABLED);
 #ifdef CONFIG_SUSPEND_LOG_DEBUG
-		pr_cont("done.");
+		pr_debug("done.");
 #endif
 
 	}
 #ifdef CONFIG_SUSPEND_LOG_DEBUG
-	pr_cont("\n");
+	pr_debug("\n");
 #endif
 	BUG_ON(in_atomic());
 
@@ -197,9 +197,9 @@ int freeze_kernel_threads(void)
 	error = try_to_freeze_tasks(false);
 #ifdef CONFIG_SUSPEND_LOG_DEBUG
 	if (!error)
-		pr_cont("done.");
+		pr_debug("done.");
 
-	pr_cont("\n");
+	pr_debug("\n");
 #endif
 	BUG_ON(in_atomic());
 
@@ -245,7 +245,7 @@ void thaw_processes(void)
 
 	schedule();
 #ifdef CONFIG_SUSPEND_LOG_DEBUG
-	pr_cont("done.\n");
+	pr_debug("done.\n");
 #endif
 	trace_suspend_resume(TPS("thaw_processes"), 0, false);
 }
@@ -268,6 +268,6 @@ void thaw_kernel_threads(void)
 
 	schedule();
 #ifdef CONFIG_SUSPEND_LOG_DEBUG
-	pr_cont("done.\n");
+	pr_debug("done.\n");
 #endif
 }
