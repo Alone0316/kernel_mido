@@ -139,7 +139,8 @@ bool osq_lock(struct optimistic_spin_queue *lock)
 		 * completing if owner is to be scheduled on the same CPU.
 		 * It will be a live lock.
 		 */
-		if (need_resched() || rt_task(task))
+		if (need_resched() || rt_task(task) ||
+					vcpu_is_preempted(node_cpu(node->prev)))
 			goto unqueue;
 
 		cpu_relax_lowlatency();
