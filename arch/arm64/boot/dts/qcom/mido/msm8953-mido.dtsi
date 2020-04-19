@@ -19,3 +19,4 @@
 #include "msm8953-memory-mido.dtsi"
 #include "msm8953-OC-cpu.dtsi"
 #include "msm8953-OC-regulator.dtsi"
+#include "msm8953-OC-gpu.dtsi"
