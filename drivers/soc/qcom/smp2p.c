@@ -216,6 +216,10 @@ static irqreturn_t qcom_smp2p_intr(int irq, void *data)
 		status = val ^ entry->last_value;
 		entry->last_value = val;
 
+		/* Ensure irq_pending is read correctly */
+		mb();
+		status |= *entry->irq_pending;
+
 		/* No changes of this entry? */
 		if (!status)
 			continue;
@@ -268,6 +272,22 @@ static int smp2p_set_irq_type(struct irq_data *irqd, unsigned int type)
 		set_bit(irq, entry->irq_falling);
 	else
 		clear_bit(irq, entry->irq_falling);
+
+	return 0;
+}
+
+static int smp2p_retrigger_irq(struct irq_data *irqd)
+{
+	struct smp2p_entry *entry = irq_data_get_irq_chip_data(irqd);
+	irq_hw_number_t irq = irqd_to_hwirq(irqd);
+
+	SMP2P_INFO("%d: %s: %lu\n", entry->smp2p->remote_pid, entry->name, irq);
+	set_bit(irq, entry->irq_pending);
+
+	/* Ensure irq_pending is visible to all cpus that retried interrupt
+	 * can run on
+	 */
+	mb();
 
 	return 0;
 }
