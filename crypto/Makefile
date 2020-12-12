@@ -150,3 +150,15 @@ obj-$(CONFIG_CRYPTO_ABLK_HELPER) += ablk_helper.o
 
 # Squeeze a little bit more juice from GCC
 ccflags-y := -O3
+
+ifeq ($(cc-name),gcc)
+ifneq ($(filter -mcpu=%, $(MACH_CFLAGS)),)
+# Includes crypto extension by default for Clang
+ccflags-y += $(filter -mcpu=%, $(MACH_CFLAGS))+crypto
+endif
+endif
+
+ifneq ($(filter -Wa$(comma)-mcpu=%, $(MACH_AFLAGS)),)
+ccflags-y += $(filter -Wa$(comma)-mcpu=%, $(MACH_AFLAGS))+crypto
+asflags-y += $(filter -Wa$(comma)-mcpu=%, $(MACH_AFLAGS))+crypto
+endif
