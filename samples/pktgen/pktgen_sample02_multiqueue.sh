@@ -28,7 +28,7 @@ fi
 [ -z "$DST_MAC" ] && DST_MAC="90:e2:ba:ff:ff:ff"
 
 # General cleanup everything since last run
-pg_ctrl "reset"
+[ -z "$APPEND" ] && pg_ctrl "reset"
 
 # Threads are specified with parameter -t value in $THREADS
 for ((thread = 0; thread < $THREADS; thread++)); do
@@ -37,7 +37,7 @@ for ((thread = 0; thread < $THREADS; thread++)); do
     dev=${DEV}@${thread}
 
     # Add remove all other devices and add_device $dev to thread
-    pg_thread $thread "rem_device_all"
+    [ -z "$APPEND" ] && pg_thread $thread "rem_device_all"
     pg_thread $thread "add_device" $dev
 
     # Notice config queue to map to cpu (mirrors smp_processor_id())
@@ -63,14 +63,18 @@ for ((thread = 0; thread < $THREADS; thread++)); do
     pg_set $dev "udp_src_max $UDP_MAX"
 done
 
-# start_run
-echo "Running... ctrl^C to stop" >&2
-pg_ctrl "start"
-echo "Done" >&2
+if [ -z "$APPEND" ]; then
+    # start_run
+    echo "Running... ctrl^C to stop" >&2
+    pg_ctrl "start"
+    echo "Done" >&2
 
 # Print results
-for ((thread = 0; thread < $THREADS; thread++)); do
-    dev=${DEV}@${thread}
-    echo "Device: $dev"
-    cat /proc/net/pktgen/$dev | grep -A2 "Result:"
-done
+    for ((thread = 0; thread < $THREADS; thread++)); do
+        dev=${DEV}@${thread}
+        echo "Device: $dev"
+        cat /proc/net/pktgen/$dev | grep -A2 "Result:"
+    done
+else
+    echo "Append mode: config done. Do more or use 'pg_ctrl start' to run"
+fi
