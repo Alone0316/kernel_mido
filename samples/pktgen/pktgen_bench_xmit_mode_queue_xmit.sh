@@ -24,7 +24,6 @@ if [[ -n "$BURST" ]]; then
 fi
 
 # Base Config
-DELAY="0"        # Zero means max speed
 COUNT="10000000" # Zero means indefinitely
 
 # General cleanup everything since last run

@@ -25,7 +25,6 @@ source ${basedir}/parameters.sh
 [ -z "$FLOWLEN" ]   && FLOWLEN="10"
 
 # Base Config
-DELAY="0"  # Zero means max speed
 COUNT="0"  # Zero means indefinitely
 
 if [[ -n "$BURST" ]]; then
