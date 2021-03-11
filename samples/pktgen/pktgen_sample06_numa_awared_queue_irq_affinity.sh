@@ -36,7 +36,7 @@ fi
 [ -z "$DST_MAC" ] && DST_MAC="90:e2:ba:ff:ff:ff"
 
 # General cleanup everything since last run
-pg_ctrl "reset"
+[ -z "$APPEND" ] && pg_ctrl "reset"
 
 # Threads are specified with parameter -t value in $THREADS
 for ((i = 0; i < $THREADS; i++)); do
@@ -50,7 +50,7 @@ for ((i = 0; i < $THREADS; i++)); do
     info "irq ${irq_array[$i]} is set affinity to `cat /proc/irq/${irq_array[$i]}/smp_affinity_list`"
 
     # Add remove all other devices and add_device $dev to thread
-    pg_thread $thread "rem_device_all"
+    [ -z "$APPEND" ] && pg_thread $thread "rem_device_all"
     pg_thread $thread "add_device" $dev
 
     # select queue and bind the queue and $dev in 1:1 relationship
@@ -83,14 +83,18 @@ for ((i = 0; i < $THREADS; i++)); do
 done
 
 # start_run
-echo "Running... ctrl^C to stop" >&2
-pg_ctrl "start"
-echo "Done" >&2
+if [ -z "$APPEND" ]; then
+    echo "Running... ctrl^C to stop" >&2
+    pg_ctrl "start"
+    echo "Done" >&2
 
-# Print results
-for ((i = 0; i < $THREADS; i++)); do
-    thread=${cpu_array[$((i+F_THREAD))]}
-    dev=${DEV}@${thread}
-    echo "Device: $dev"
-    cat /proc/net/pktgen/$dev | grep -A2 "Result:"
-done
+    # Print results
+    for ((i = 0; i < $THREADS; i++)); do
+        thread=${cpu_array[$((i+F_THREAD))]}
+        dev=${DEV}@${thread}
+        echo "Device: $dev"
+        cat /proc/net/pktgen/$dev | grep -A2 "Result:"
+    done
+else
+    echo "Append mode: config done. Do more or use 'pg_ctrl start' to run"
+fi

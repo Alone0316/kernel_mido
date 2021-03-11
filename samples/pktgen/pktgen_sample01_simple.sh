@@ -30,11 +30,11 @@ UDP_MAX=109
 
 # General cleanup everything since last run
 # (especially important if other threads were configured by other scripts)
-pg_ctrl "reset"
+[ -z "$APPEND" ] && pg_ctrl "reset"
 
 # Add remove all other devices and add_device $DEV to thread 0
 thread=0
-pg_thread $thread "rem_device_all"
+[ -z "$APPEND" ] && pg_thread $thread "rem_device_all"
 pg_thread $thread "add_device" $DEV
 
 # How many packets to send (zero means indefinitely)
@@ -62,11 +62,15 @@ pg_set $DEV "flag UDPSRC_RND"
 pg_set $DEV "udp_src_min $UDP_MIN"
 pg_set $DEV "udp_src_max $UDP_MAX"
 
-# start_run
-echo "Running... ctrl^C to stop" >&2
-pg_ctrl "start"
-echo "Done" >&2
+if [ -z "$APPEND" ]; then
+    # start_run
+    echo "Running... ctrl^C to stop" >&2
+    pg_ctrl "start"
+    echo "Done" >&2
 
-# Print results
-echo "Result device: $DEV"
-cat /proc/net/pktgen/$DEV
+    # Print results
+    echo "Result device: $DEV"
+    cat /proc/net/pktgen/$DEV
+else
+    echo "Append mode: config done. Do more or use 'pg_ctrl start' to run"
+fi
