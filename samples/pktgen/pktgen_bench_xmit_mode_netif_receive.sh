@@ -41,7 +41,6 @@ fi
 [ -z "$BURST" ] && BURST=1024
 
 # Base Config
-DELAY="0"        # Zero means max speed
 COUNT="10000000" # Zero means indefinitely
 
 # General cleanup everything since last run
