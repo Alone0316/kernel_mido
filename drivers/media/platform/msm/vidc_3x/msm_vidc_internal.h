@@ -142,8 +142,7 @@ struct eos_buf {
 };
 
 struct internal_buf {
-	struct list_
-head list;
+	struct list_head list;
 	enum hal_buffer buffer_type;
 	struct msm_smem *handle;
 	enum buffer_owner buffer_ownership;
