@@ -182,6 +182,7 @@ static unsigned long find_victims(int *vindex)
 		}
 	}
 	rcu_read_unlock();
+		     sizeof(*victims), victim_cmp, NULL);
 
 	return pages_found;
 }
@@ -236,6 +237,15 @@ static void scan_and_kill(void)
 		 */
 		sort(victims, nr_to_kill, sizeof(*victims), victim_cmp,
 		     victim_swap);
+
+
+		/*
+		 * Try to kill as few of the chosen victims as possible by
+		 * sorting the chosen victims by size, which means larger
+		 * victims that have a lower adj can be killed in place of
+		 * smaller victims with a high adj.
+		 */
+		sort(victims, nr_to_kill, sizeof(*victims), victim_cmp, NULL);
 
 		/* Second round of processing to finally select the victims */
 		nr_to_kill = process_victims(nr_to_kill);
