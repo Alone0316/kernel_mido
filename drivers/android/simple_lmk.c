@@ -72,6 +72,14 @@ static void victim_swap(void *lhs_ptr, void *rhs_ptr, int size)
 	swap(*lhs, *rhs);
 }
 
+static bool vtsk_is_duplicate(int vlen, struct task_struct *vtsk)
+{
+	struct victim_info *lhs = (typeof(lhs))lhs_ptr;
+	struct victim_info *rhs = (typeof(rhs))rhs_ptr;
+
+	swap(*lhs, *rhs);
+}
+
 static unsigned long get_total_mm_pages(struct mm_struct *mm)
 {
 	unsigned long pages = 0;
