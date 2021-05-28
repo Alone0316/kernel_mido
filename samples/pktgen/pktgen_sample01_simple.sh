@@ -57,6 +57,8 @@ pg_set $DEV "flag NO_TIMESTAMP"
 pg_set $DEV "dst_mac $DST_MAC"
 pg_set $DEV "dst$IP6 $DEST_IP"
 
+[ ! -z "$UDP_CSUM" ] && pg_set $dev "flag UDPCSUM"
+
 # Setup random UDP port src range
 pg_set $DEV "flag UDPSRC_RND"
 pg_set $DEV "udp_src_min $UDP_MIN"
