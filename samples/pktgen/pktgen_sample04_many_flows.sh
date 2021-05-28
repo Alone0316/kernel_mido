@@ -54,6 +54,8 @@ for ((thread = 0; thread < $THREADS; thread++)); do
     pg_set $dev "dst_mac $DST_MAC"
     pg_set $dev "dst $DEST_IP"
 
+    [ ! -z "$UDP_CSUM" ] && pg_set $dev "flag UDPCSUM"
+
     # Randomize source IP-addresses
     pg_set $dev "flag IPSRC_RND"
     pg_set $dev "src_min 198.18.0.0"

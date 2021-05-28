@@ -57,6 +57,8 @@ for ((thread = 0; thread < $THREADS; thread++)); do
     pg_set $dev "dst_mac $DST_MAC"
     pg_set $dev "dst$IP6 $DEST_IP"
 
+    [ ! -z "$UDP_CSUM" ] && pg_set $dev "flag UDPCSUM"
+
     # Setup random UDP port src range
     pg_set $dev "flag UDPSRC_RND"
     pg_set $dev "udp_src_min $UDP_MIN"
