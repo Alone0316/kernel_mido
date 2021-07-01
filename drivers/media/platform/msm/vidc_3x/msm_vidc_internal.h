@@ -1,5 +1,6 @@
 /* Copyright (c) 2012-2018, 2020, The Linux Foundation. All rights reserved.
  * Copyright (c) 2012-2020, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2018, 2020,2021 The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -46,6 +47,8 @@
 #define MIN_SUPPORTED_WIDTH 32
 #define MIN_SUPPORTED_HEIGHT 32
 #define DEFAULT_FPS 15
+#define HD_WIDTH 1920
+#define HD_HEIGHT 1088
 
 /* Maintains the number of FTB's between each FBD over a window */
 #define DCVS_FTB_WINDOW 32
@@ -139,7 +142,8 @@ struct eos_buf {
 };
 
 struct internal_buf {
-	struct list_head list;
+	struct list_
+head list;
 	enum hal_buffer buffer_type;
 	struct msm_smem *handle;
 	enum buffer_owner buffer_ownership;
