@@ -350,6 +350,7 @@ static struct avc_xperms_decision_node
 
 	xpd_node = kmem_cache_zalloc(avc_xperms_decision_cachep,
 			GFP_NOWAIT | __GFP_NOWARN);
+				     GFP_NOWAIT | __GFP_NOWARN);
 	if (!xpd_node)
 		return NULL;
 
@@ -398,6 +399,7 @@ static struct avc_xperms_node *avc_xperms_alloc(void)
 
 	xp_node = kmem_cache_zalloc(avc_xperms_cachep,
 			GFP_NOWAIT | __GFP_NOWARN);
+	xp_node = kmem_cache_zalloc(avc_xperms_cachep, GFP_NOWAIT | __GFP_NOWARN);
 	if (!xp_node)
 		return xp_node;
 	INIT_LIST_HEAD(&xp_node->xpd_head);
