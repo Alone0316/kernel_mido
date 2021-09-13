@@ -4368,6 +4368,7 @@ static struct platform_driver qpnp_labibb_regulator_driver = {
 	.driver		= {
 		.name		= QPNP_LABIBB_REGULATOR_DRIVER_NAME,
 		.of_match_table	= spmi_match_table,
+		.probe_type	= PROBE_FORCE_SYNCHRONOUS,
 	},
 	.probe		= qpnp_labibb_regulator_probe,
 	.remove		= qpnp_labibb_regulator_remove,

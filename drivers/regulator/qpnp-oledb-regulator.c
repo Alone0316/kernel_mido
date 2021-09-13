@@ -1408,6 +1408,7 @@ static struct platform_driver qpnp_oledb_regulator_driver = {
 	.driver		= {
 		.name		= QPNP_OLEDB_REGULATOR_DRIVER_NAME,
 		.of_match_table	= qpnp_oledb_regulator_match_table,
+		.probe_type	= PROBE_FORCE_SYNCHRONOUS,
 	},
 	.probe		= qpnp_oledb_regulator_probe,
 	.remove		= qpnp_oledb_regulator_remove,
