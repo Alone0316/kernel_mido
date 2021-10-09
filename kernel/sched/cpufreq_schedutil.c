@@ -685,7 +685,6 @@ static struct attribute *sugov_attributes[] = {
 	&pl.attr,
 	NULL
 };
-
 static struct kobj_type sugov_tunables_ktype = {
 	.default_attrs = sugov_attributes,
 	.sysfs_ops = &governor_sysfs_ops,
@@ -805,8 +804,6 @@ static void sugov_tunables_free(struct sugov_tunables *tunables)
 {
 	if (!have_governor_per_policy())
 		global_tunables = NULL;
-
-	kfree(tunables);
 }
 
 static void sugov_tunables_restore(struct cpufreq_policy *policy)
@@ -926,7 +923,6 @@ static void sugov_exit(struct cpufreq_policy *policy)
 		sugov_tunables_save(policy, tunables);
 		sugov_tunables_free(tunables);
 	}
-
 	mutex_unlock(&global_tunables_lock);
 
 	sugov_kthread_stop(sg_policy);
