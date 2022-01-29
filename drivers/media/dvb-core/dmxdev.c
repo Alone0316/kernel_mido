@@ -4885,7 +4885,9 @@ err_register_dvr_dvbdev:
 err_register_dvbdev:
 	vfree(dmxdev->filter);
 	dmxdev->filter = NULL;
+#ifdef ret
 	return ret;
+#endif
 }
 
 EXPORT_SYMBOL(dvb_dmxdev_init);
