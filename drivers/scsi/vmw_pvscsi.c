@@ -587,6 +587,7 @@ static void pvscsi_complete_request(struct pvscsi_adapter *adapter,
 			 */
 			if (e->dataLen && (e->dataLen < scsi_bufflen(cmd)))
 				scsi_set_resid(cmd, scsi_bufflen(cmd) - e->dataLen);
+        
 			cmd->result = (DID_OK << 16);
 			break;
 

@@ -685,7 +685,6 @@ static struct attribute *sugov_attributes[] = {
 	&pl.attr,
 	NULL
 };
-
 static struct kobj_type sugov_tunables_ktype = {
 	.default_attrs = sugov_attributes,
 	.sysfs_ops = &governor_sysfs_ops,
