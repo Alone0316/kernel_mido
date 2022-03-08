@@ -1130,7 +1130,6 @@ u8 *rndis_get_next_response(struct rndis_params *params, u32 *length)
 		}
 	}
 	spin_unlock_irqrestore(&params->lock, flags);
-
 	return NULL;
 }
 EXPORT_SYMBOL_GPL(rndis_get_next_response);
