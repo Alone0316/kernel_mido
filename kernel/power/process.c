@@ -144,7 +144,6 @@ int freeze_processes(void)
 	if (!pm_freezing)
 		atomic_inc(&system_freezing_cnt);
 
-	pm_wakeup_clear();
 #ifdef CONFIG_SUSPEND_LOG_DEBUG
 	pr_debug("Freezing user space processes ... ");
 #endif
