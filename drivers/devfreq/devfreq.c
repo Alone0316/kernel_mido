@@ -1140,7 +1140,7 @@ unlock:
 	return ret;
 }
 
-static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
+static ssize_t __maybe_unused max_freq_store(struct device *dev, struct device_attribute *attr,
 			      const char *buf, size_t count)
 {
 	struct devfreq *df = to_devfreq(dev);
@@ -1179,7 +1179,7 @@ show_one(min_freq);
 show_one(max_freq);
 
 static DEVICE_ATTR_RW(min_freq);
-static DEVICE_ATTR_RW(max_freq);
+static DEVICE_ATTR_RO(max_freq);
 
 static ssize_t available_frequencies_show(struct device *d,
 					  struct device_attribute *attr,
