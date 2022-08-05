@@ -18,7 +18,6 @@
 #include "ext4.h"
 #include "xattr.h"
 #include "truncate.h"
-#include <trace/events/android_fs.h>
 
 #define EXT4_XATTR_SYSTEM_DATA	"data"
 #define EXT4_MIN_INLINE_DATA_SIZE	((sizeof(__le32) * EXT4_N_BLOCKS))
@@ -503,17 +502,6 @@ int ext4_readpage_inline(struct inode *inode, struct page *page)
 		return -EAGAIN;
 	}
 
-	if (trace_android_fs_dataread_start_enabled()) {
-		char *path, pathbuf[MAX_TRACE_PATHBUF_LEN];
-
-		path = android_fstrace_get_pathname(pathbuf,
-						    MAX_TRACE_PATHBUF_LEN,
-						    inode);
-		trace_android_fs_dataread_start(inode, page_offset(page),
-						PAGE_SIZE, current->pid,
-						path, current->comm);
-	}
-
 	/*
 	 * Current inline data can only exist in the 1st page,
 	 * So for all the other pages, just set them uptodate.
@@ -524,8 +512,6 @@ int ext4_readpage_inline(struct inode *inode, struct page *page)
 		zero_user_segment(page, 0, PAGE_SIZE);
 		SetPageUptodate(page);
 	}
-
-	trace_android_fs_dataread_end(inode, page_offset(page), PAGE_SIZE);
 
 	up_read(&EXT4_I(inode)->xattr_sem);
 
@@ -1997,6 +1983,18 @@ int ext4_convert_inline_data(struct inode *inode)
 	if (!ext4_has_inline_data(inode)) {
 		ext4_clear_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA);
 		return 0;
+	} else if (!ext4_test_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA)) {
+		/*
+		 * Inode has inline data but EXT4_STATE_MAY_INLINE_DATA is
+		 * cleared. This means we are in the middle of moving of
+		 * inline data to delay allocated block. Just force writeout
+		 * here to finish conversion.
+		 */
+		error = filemap_flush(inode->i_mapping);
+		if (error)
+			return error;
+		if (!ext4_has_inline_data(inode))
+			return 0;
 	}
 
 	needed_blocks = ext4_writepage_trans_blocks(inode);

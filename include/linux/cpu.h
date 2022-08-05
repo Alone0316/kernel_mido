@@ -61,6 +61,10 @@ extern ssize_t cpu_show_tsx_async_abort(struct device *dev,
 					char *buf);
 extern ssize_t cpu_show_itlb_multihit(struct device *dev,
 				      struct device_attribute *attr, char *buf);
+extern ssize_t cpu_show_srbds(struct device *dev, struct device_attribute *attr, char *buf);
+extern ssize_t cpu_show_mmio_stale_data(struct device *dev,
+					struct device_attribute *attr,
+					char *buf);
 
 extern __printf(4, 5)
 struct device *cpu_device_create(struct device *parent, void *drvdata,
@@ -198,6 +202,7 @@ extern void cpu_hotplug_begin(void);
 extern void cpu_hotplug_done(void);
 extern void get_online_cpus(void);
 extern void put_online_cpus(void);
+static inline void lockdep_assert_cpus_held(void) { }
 extern void cpu_hotplug_disable(void);
 extern void cpu_hotplug_enable(void);
 #define hotcpu_notifier(fn, pri)	cpu_notifier(fn, pri)
@@ -213,6 +218,7 @@ int cpu_down(unsigned int cpu);
 
 static inline void cpu_hotplug_begin(void) {}
 static inline void cpu_hotplug_done(void) {}
+static inline void lockdep_assert_cpus_held(void) { }
 #define get_online_cpus()	do { } while (0)
 #define put_online_cpus()	do { } while (0)
 #define cpu_hotplug_disable()	do { } while (0)

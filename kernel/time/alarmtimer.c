@@ -25,6 +25,8 @@
 #include <linux/posix-timers.h>
 #include <linux/workqueue.h>
 #include <linux/freezer.h>
+#include <linux/delay.h>
+
 
 /**
  * struct alarm_base - Alarm timer bases
@@ -278,10 +280,8 @@ static int alarmtimer_suspend(struct device *dev)
 	if (min.tv64 == 0)
 		return 0;
 
-	if (ktime_to_ns(min) < NSEC_PER_SEC / 2) {
+	if (ktime_to_ns(min) < NSEC_PER_SEC / 2)
 		__pm_wakeup_event(ws, MSEC_PER_SEC / 2);
-		return -EBUSY;
-	}
 
 	/* Setup an rtc timer to fire that far in the future */
 	rtc_timer_cancel(rtc, &rtctimer);
@@ -437,6 +437,7 @@ int alarm_cancel(struct alarm *alarm)
 		if (ret >= 0)
 			return ret;
 		cpu_relax();
+		ndelay(TIMER_LOCK_TIGHT_LOOP_DELAY_NS);
 	}
 }
 EXPORT_SYMBOL_GPL(alarm_cancel);
