@@ -53,12 +53,12 @@ MODULE_PARM_DESC(quirks, "Bit flags for quirks to be enabled as default");
  * @ptr: address of hc register to be read
  * @mask: bits to look at in result of read
  * @done: value of those bits when handshake succeeds
- * @usec: timeout in microseconds
+ * @timeout_us: timeout in microseconds
  *
  * Returns negative errno, or zero on success
  *
  * Success happens when the "mask" bits have the specified value (hardware
- * handshake done).  There are two failure modes:  "usec" have passed (major
+ * handshake done).  There are two failure modes:  "timeout_us" have passed (major
  * hardware flakeout), or the register reads as all-ones (hardware removed).
  */
 int xhci_handshake(void __iomem *ptr, u32 mask, u32 done, int usec)
@@ -77,7 +77,7 @@ int xhci_handshake(void __iomem *ptr, u32 mask, u32 done, int usec)
 }
 
 int xhci_handshake_check_state(struct xhci_hcd *xhci,
-		void __iomem *ptr, u32 mask, u32 done, int usec)
+		void __iomem *ptr, u32 mask, u32 done, u64 timeout_us)
 {
 	u32	result;
 
@@ -90,8 +90,8 @@ int xhci_handshake_check_state(struct xhci_hcd *xhci,
 		if (result == done)
 			return 0;
 		udelay(1);
-		usec--;
-	} while (usec > 0);
+		timeout_us--;
+	} while (timeout_us > 0);
 	return -ETIMEDOUT;
 }
 
