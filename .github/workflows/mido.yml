@@ -1,4 +1,4 @@
-name: mido-main
+name: mido-oc
 on:
    workflow_dispatch:
 
