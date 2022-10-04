@@ -1509,7 +1509,7 @@ static void gsm_dlci_t1(unsigned long data)
 			dlci->mode = DLCI_MODE_ADM;
 			gsm_dlci_open(dlci);
 		} else {
-			gsm_dlci_begin_close(dlci); /* prevent half open link */
+			gsm_dlci_close(dlci);
 		}
 
 		break;
