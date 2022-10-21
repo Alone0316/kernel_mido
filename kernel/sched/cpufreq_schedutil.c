@@ -685,6 +685,7 @@ static struct attribute *sugov_attributes[] = {
 	&pl.attr,
 	NULL
 };
+
 static struct kobj_type sugov_tunables_ktype = {
 	.default_attrs = sugov_attributes,
 	.sysfs_ops = &governor_sysfs_ops,
@@ -892,7 +893,6 @@ out:
 
 fail:
 	policy->governor_data = NULL;
-	sugov_tunables_free(tunables);
 
 stop_kthread:
 	sugov_kthread_stop(sg_policy);
