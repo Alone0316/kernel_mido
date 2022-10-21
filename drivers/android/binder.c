@@ -2624,10 +2624,6 @@ static int binder_translate_handle(struct flat_binder_object *fp,
 				  proc->pid, thread->pid, fp->handle);
 		return -EINVAL;
 	}
-	if (security_binder_transfer_binder(proc->tsk, target_proc->tsk)) {
-		ret = -EPERM;
-		goto done;
-	}
 
 	binder_node_lock(node);
 	if (node->proc == target_proc) {
@@ -2707,11 +2703,6 @@ static int binder_translate_fd(int fd,
 				  proc->pid, thread->pid, fd);
 		ret = -EBADF;
 		goto err_fget;
-	}
-	ret = security_binder_transfer_file(proc->tsk, target_proc->tsk, file);
-	if (ret < 0) {
-		ret = -EPERM;
-		goto err_security;
 	}
 
 	target_fd = task_get_unused_fd_flags(target_proc, O_CLOEXEC);
