@@ -4920,7 +4920,6 @@ retry_enum:
 	for (i = 0; i < SET_CONFIG_TRIES; i++) {
 		usb_lock_port(port_dev);
 		mutex_lock(hcd->address0_mutex);
-		retry_locked = true;
 
 		/* reallocate for each attempt, since references
 		 * to the previous one can escape in various ways
@@ -5055,10 +5054,6 @@ loop:
 		usb_ep0_reinit(udev);
 		release_devnum(udev);
 		hub_free_dev(udev);
-		if (retry_locked) {
-			mutex_unlock(hcd->address0_mutex);
-			usb_unlock_port(port_dev);
-		}
 		usb_put_dev(udev);
 		if ((status == -ENOTCONN) || (status == -ENOTSUPP))
 			break;
