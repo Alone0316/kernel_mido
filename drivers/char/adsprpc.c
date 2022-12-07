@@ -2723,7 +2723,7 @@ static int fastrpc_munmap_on_dsp_rh(struct fastrpc_file *fl, uint64_t phys,
 		if (err == AEE_EUNSUPPORTED) {
 			remote_arg_t ra[1];
 
-			pr_warn("ADSPRPC:Failed to get security key with updated remote call, falling back to older method");
+			pr_debug("ADSPRPC:Failed to get security key with updated remote call, falling back to older method");
 			ra[0].buf.pv = (void *)&routargs;
 			ra[0].buf.len = sizeof(routargs);
 			ioctl.inv.sc = REMOTE_SCALARS_MAKE(7, 0, 1);
