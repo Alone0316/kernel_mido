@@ -51,7 +51,7 @@
 #define PWR_ON_STEP_SLEEP 100
 #define PWR_ON_STEP_RANGE1 100
 #define PWR_ON_STEP_RANGE2 900
-#define FPC_TTW_HOLD_TIME 1000
+#define FPC_TTW_HOLD_TIME 400
 #define NUM_PARAMS_REG_ENABLE_SET 2
 
 static const char * const pctl_names[] = {
