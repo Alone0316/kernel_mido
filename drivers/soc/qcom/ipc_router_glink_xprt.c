@@ -13,7 +13,6 @@
 /*
  * IPC ROUTER GLINK XPRT module.
  */
-#define DEBUG
 
 #include <linux/module.h>
 #include <linux/platform_device.h>
@@ -28,7 +27,7 @@
 #include <soc/qcom/glink.h>
 #include <soc/qcom/subsystem_restart.h>
 
-static int ipc_router_glink_xprt_debug_mask;
+static int ipc_router_glink_xprt_debug_mask = 0;
 module_param_named(debug_mask, ipc_router_glink_xprt_debug_mask,
 		   int, 0664);
 
