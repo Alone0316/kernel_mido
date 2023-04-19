@@ -23,6 +23,6 @@ jobs:
              chmod +x build.sh && bash build.sh
              shell: bash
              env:
-              CHATID: ${{ -884443679 }}
-              API_BOT: ${{ 6006526097:AAGtRoCqdQlC4zvy8jfSk1gk1PZW16ZeyWA }}
+              CHATID: ${{ secrets.CHAT_ID }}
+              API_BOT: ${{ secrets.BOT_API }}
 
