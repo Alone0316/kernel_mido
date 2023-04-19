@@ -52,7 +52,7 @@ if [[ ! -d "$MY_DIR" ]]; then MY_DIR="$PWD"; fi
 #
 # TOOLCHAIN = the toolchain u want to use "gcc/clang"
 
-CHATID="-884443679"
+CHATID="-1001812764467"
 API_BOT="6006526097:AAGtRoCqdQlC4zvy8jfSk1gk1PZW16ZeyWA"
 
 
