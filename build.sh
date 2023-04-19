@@ -59,6 +59,7 @@ API_BOT="6006526097:AAGtRoCqdQlC4zvy8jfSk1gk1PZW16ZeyWA"
 DEVICE="Redmi Note 4/4X"
 CODENAME="mido"
 KERNEL_NAME="FussionKernel"
+KERNEL_CODE="OC"
 
 DEFCONFIG="mido_defconfig"
 
@@ -204,7 +205,7 @@ KERVER=$(make kernelversion)
                 cp -r "$IMG" zip/
                 cd zip
                 mv Image.gz-dtb zImage
-                export ZIP="$KERNEL_NAME"-"$CODENAME"-"$DATE"
+                export ZIP="$KERNEL_NAME"-"$KERNEL_CODE"-"$CODENAME"-"$DATE"
                 zip -r "$ZIP" *
                 curl -sLo zipsigner-3.0.jar https://raw.githubusercontent.com/Hunter-commits/AnyKernel/master/zipsigner-3.0.jar
                 java -jar zipsigner-3.0.jar "$ZIP".zip "$ZIP"-signed.zip
