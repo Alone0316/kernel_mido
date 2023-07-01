@@ -11,6 +11,10 @@ root_check_run_with_sudo "$@"
 
 # Parameter parsing via include
 source ${basedir}/parameters.sh
+
+# Trap EXIT first
+trap_exit
+
 # Set some default params, if they didn't get set
 [ -z "$DEST_IP" ]   && DEST_IP="198.18.0.42"
 [ -z "$DST_MAC" ]   && DST_MAC="90:e2:ba:ff:ff:ff"

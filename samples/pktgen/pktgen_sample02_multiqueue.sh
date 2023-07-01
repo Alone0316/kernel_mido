@@ -13,6 +13,9 @@ root_check_run_with_sudo "$@"
 # Required param: -i dev in $DEV
 source ${basedir}/parameters.sh
 
+# Trap EXIT first
+trap_exit
+
 # Base Config
 COUNT="100000"   # Zero means indefinitely
 [ -z "$CLONE_SKB" ] && CLONE_SKB="0"
