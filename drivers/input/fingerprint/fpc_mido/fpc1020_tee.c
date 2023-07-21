@@ -623,6 +623,7 @@ static struct platform_driver fpc1020_driver = {
 		.name	= "fpc1020",
 		.owner	= THIS_MODULE,
 		.of_match_table = fpc1020_of_match,
+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 #ifdef LINUX_CONTROL_SPI_CLK
 		.pm = &fpc1020_pm_ops,
 #endif
