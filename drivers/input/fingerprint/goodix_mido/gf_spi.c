@@ -820,6 +820,7 @@ static struct platform_driver gf_driver = {
 	.driver = {
 		   .name = GF_DEV_NAME,
 		   .owner = THIS_MODULE,
+		   .probe_type = PROBE_PREFER_ASYNCHRONOUS,
 #if defined(USE_SPI_BUS)
 
 #endif
